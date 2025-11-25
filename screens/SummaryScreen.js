@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -29,6 +30,29 @@ export default function SummaryScreen({ route, navigation }) {
     } catch (error) {
       console.error('Error loading sessions:', error);
     }
+  };
+
+  const deleteSession = async (sessionId) => {
+    Alert.alert(
+      'Delete Session',
+      'Are you sure you want to delete this session?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const updatedSessions = sessions.filter(s => s.id !== sessionId);
+              await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSessions));
+              setSessions(updatedSessions);
+            } catch (error) {
+              console.error('Error deleting session:', error);
+            }
+          },
+        },
+      ]
+    );
   };
 
   const handleBackToHome = () => {
@@ -124,12 +148,21 @@ export default function SummaryScreen({ route, navigation }) {
               return (
                 <View key={session.id} style={styles.historyCard}>
                   <View style={styles.historyHeader}>
-                    <Text style={styles.historyTopic}>
-                      {getTopicLabel(session.topic)} - Level {session.difficulty}
-                    </Text>
-                    <Text style={styles.historyDate}>
-                      {formatDate(session.timestamp)}
-                    </Text>
+                    <View style={styles.historyHeaderLeft}>
+                      <Text style={styles.historyTopic}>
+                        {getTopicLabel(session.topic)} - Level {session.difficulty}
+                      </Text>
+                      <Text style={styles.historyDate}>
+                        {formatDate(session.timestamp)}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.deleteButton}
+                      onPress={() => deleteSession(session.id)}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={styles.deleteIcon}>🗑️</Text>
+                    </TouchableOpacity>
                   </View>
                   
                   <View style={styles.historyStats}>
@@ -249,7 +282,13 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   historyHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: 10,
+  },
+  historyHeaderLeft: {
+    flex: 1,
   },
   historyTopic: {
     fontSize: 16,
@@ -260,6 +299,13 @@ const styles = StyleSheet.create({
   historyDate: {
     fontSize: 12,
     color: '#999',
+  },
+  deleteButton: {
+    padding: 5,
+    marginLeft: 10,
+  },
+  deleteIcon: {
+    fontSize: 20,
   },
   historyStats: {
     flexDirection: 'row',

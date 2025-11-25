@@ -8,6 +8,9 @@ import {
   SafeAreaView,
   Alert,
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -29,6 +32,9 @@ export default function PracticeScreen({ route, navigation }) {
   const [sessionActive, setSessionActive] = useState(true);
 
   const timerRef = useRef(null);
+  const attemptsRef = useRef(0);
+  const correctRef = useRef(0);
+  const responseTimesRef = useRef([]);
 
   // Initialize first question
   useEffect(() => {
@@ -70,11 +76,16 @@ export default function PracticeScreen({ route, navigation }) {
     const responseTime = Date.now() - questionStartTime;
     const isCorrect = parseInt(userAnswer) === currentQuestion.answer;
 
-    setAttempts((prev) => prev + 1);
+    attemptsRef.current += 1;
+    setAttempts(attemptsRef.current);
+    
     if (isCorrect) {
-      setCorrect((prev) => prev + 1);
+      correctRef.current += 1;
+      setCorrect(correctRef.current);
     }
-    setResponseTimes((prev) => [...prev, responseTime]);
+    
+    responseTimesRef.current.push(responseTime);
+    setResponseTimes(responseTimesRef.current);
 
     // Clear input and generate new question
     setUserAnswer('');
@@ -87,8 +98,12 @@ export default function PracticeScreen({ route, navigation }) {
     if (!sessionActive) return;
 
     const responseTime = Date.now() - questionStartTime;
-    setAttempts((prev) => prev + 1);
-    setResponseTimes((prev) => [...prev, responseTime]);
+    
+    attemptsRef.current += 1;
+    setAttempts(attemptsRef.current);
+    
+    responseTimesRef.current.push(responseTime);
+    setResponseTimes(responseTimesRef.current);
 
     setUserAnswer('');
     generateNewQuestion();
@@ -114,11 +129,16 @@ export default function PracticeScreen({ route, navigation }) {
       clearInterval(timerRef.current);
     }
 
+    // Use ref values to ensure we get the latest counts
+    const finalAttempts = attemptsRef.current;
+    const finalCorrect = correctRef.current;
+    const finalResponseTimes = responseTimesRef.current;
+
     // Calculate average response time
     const avgResponseMs =
-      responseTimes.length > 0
+      finalResponseTimes.length > 0
         ? Math.round(
-            responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
+            finalResponseTimes.reduce((a, b) => a + b, 0) / finalResponseTimes.length
           )
         : 0;
 
@@ -127,8 +147,8 @@ export default function PracticeScreen({ route, navigation }) {
       topic,
       difficulty,
       lengthSeconds: sessionLength,
-      attempts,
-      correct,
+      attempts: finalAttempts,
+      correct: finalCorrect,
       avgResponseMs,
       timestamp: new Date().toISOString(),
     };
@@ -161,7 +181,15 @@ export default function PracticeScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
-      
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardView}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
       {/* Header with timer and progress */}
       <View style={styles.header}>
         <View style={styles.timerContainer}>
@@ -228,6 +256,8 @@ export default function PracticeScreen({ route, navigation }) {
       >
         <Text style={styles.endButtonText}>End Session</Text>
       </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -236,7 +266,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  scrollContent: {
     padding: 20,
+    flexGrow: 1,
   },
   header: {
     flexDirection: 'row',
@@ -272,7 +308,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   questionContainer: {
-    flex: 1,
+    minHeight: 200,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',

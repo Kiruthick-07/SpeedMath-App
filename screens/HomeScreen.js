@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
@@ -27,7 +28,10 @@ export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
-      <View style={styles.content}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.header}>
           <Text style={styles.title}>Speed Math Trainer</Text>
           <Text style={styles.subtitle}>Choose Your Topic</Text>
@@ -47,7 +51,7 @@ export default function HomeScreen({ navigation }) {
             </TouchableOpacity>
           ))}
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -57,9 +61,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1E3A8A',
   },
-  content: {
-    flex: 1,
+  scrollContent: {
     padding: 20,
+    paddingBottom: 40,
   },
   header: {
     alignItems: 'center',
@@ -79,7 +83,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   topicGrid: {
-    flex: 1,
     gap: 15,
   },
   topicCard: {
