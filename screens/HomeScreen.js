@@ -4,148 +4,50 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   SafeAreaView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 export default function HomeScreen({ navigation }) {
-  const [topic, setTopic] = useState('mixed');
-  const [difficulty, setDifficulty] = useState(1);
-  const [sessionLength, setSessionLength] = useState(60);
+  const [selectedTopic, setSelectedTopic] = useState(null);
 
   const topics = [
-    { value: 'mixed', label: 'Mixed' },
-    { value: 'addition', label: 'Addition' },
-    { value: 'subtraction', label: 'Subtraction' },
-    { value: 'multiplication', label: 'Multiplication' },
-    { value: 'division', label: 'Division' },
+    { value: 'mixed', label: 'Mixed', icon: '🔀', desc: 'All Operations' },
+    { value: 'addition', label: 'Addition', icon: '➕', desc: 'Add Numbers' },
+    { value: 'subtraction', label: 'Subtraction', icon: '➖', desc: 'Subtract Numbers' },
+    { value: 'multiplication', label: 'Multiplication', icon: '✖️', desc: 'Multiply Numbers' },
+    { value: 'division', label: 'Division', icon: '➗', desc: 'Divide Numbers' },
   ];
 
-  const difficulties = [
-    { value: 1, label: 'Level 1', desc: '(1-9)' },
-    { value: 2, label: 'Level 2', desc: '(2-99)' },
-    { value: 3, label: 'Level 3', desc: '(10-999)' },
-    { value: 4, label: 'Level 4', desc: '(50-9999)' },
-    { value: 5, label: 'Level 5', desc: '(100-99999)' },
-  ];
-
-  const sessionLengths = [
-    { value: 30, label: '30s' },
-    { value: 60, label: '60s' },
-    { value: 90, label: '90s' },
-    { value: 120, label: '120s' },
-  ];
-
-  const handleStartPractice = () => {
-    navigation.navigate('Practice', {
-      topic,
-      difficulty,
-      sessionLength,
-    });
+  const handleTopicSelect = (topic) => {
+    setSelectedTopic(topic);
+    navigation.navigate('Difficulty', { topic });
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>Speed Math Trainer</Text>
-        <Text style={styles.subtitle}>Improve Your Mental Arithmetic</Text>
-
-        {/* Topic Selection */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Choose Topic</Text>
-          <View style={styles.optionGrid}>
-            {topics.map((t) => (
-              <TouchableOpacity
-                key={t.value}
-                style={[
-                  styles.optionButton,
-                  topic === t.value && styles.optionButtonSelected,
-                ]}
-                onPress={() => setTopic(t.value)}
-              >
-                <Text
-                  style={[
-                    styles.optionText,
-                    topic === t.value && styles.optionTextSelected,
-                  ]}
-                >
-                  {t.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+      <StatusBar style="light" />
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Speed Math Trainer</Text>
+          <Text style={styles.subtitle}>Choose Your Topic</Text>
         </View>
 
-        {/* Difficulty Selection */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Choose Difficulty</Text>
-          <View style={styles.optionGrid}>
-            {difficulties.map((d) => (
-              <TouchableOpacity
-                key={d.value}
-                style={[
-                  styles.optionButton,
-                  difficulty === d.value && styles.optionButtonSelected,
-                ]}
-                onPress={() => setDifficulty(d.value)}
-              >
-                <Text
-                  style={[
-                    styles.optionText,
-                    difficulty === d.value && styles.optionTextSelected,
-                  ]}
-                >
-                  {d.label}
-                </Text>
-                <Text
-                  style={[
-                    styles.optionDesc,
-                    difficulty === d.value && styles.optionDescSelected,
-                  ]}
-                >
-                  {d.desc}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+        <View style={styles.topicGrid}>
+          {topics.map((t) => (
+            <TouchableOpacity
+              key={t.value}
+              style={styles.topicCard}
+              onPress={() => handleTopicSelect(t.value)}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.topicIcon}>{t.icon}</Text>
+              <Text style={styles.topicLabel}>{t.label}</Text>
+              <Text style={styles.topicDesc}>{t.desc}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
-
-        {/* Session Length Selection */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Session Length</Text>
-          <View style={styles.optionRow}>
-            {sessionLengths.map((s) => (
-              <TouchableOpacity
-                key={s.value}
-                style={[
-                  styles.optionButton,
-                  sessionLength === s.value && styles.optionButtonSelected,
-                ]}
-                onPress={() => setSessionLength(s.value)}
-              >
-                <Text
-                  style={[
-                    styles.optionText,
-                    sessionLength === s.value && styles.optionTextSelected,
-                  ]}
-                >
-                  {s.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* Start Button */}
-        <TouchableOpacity
-          style={styles.startButton}
-          onPress={handleStartPractice}
-        >
-          <Text style={styles.startButtonText}>Start Practice</Text>
-        </TouchableOpacity>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -153,90 +55,56 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#1E3A8A',
   },
-  scrollContent: {
+  content: {
+    flex: 1,
     padding: 20,
-    paddingBottom: 40,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
-    marginTop: 10,
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 30,
-  },
-  section: {
-    marginBottom: 30,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 15,
-  },
-  optionGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  optionRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  optionButton: {
-    backgroundColor: '#fff',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#ddd',
-    minWidth: 100,
-    alignItems: 'center',
-  },
-  optionButtonSelected: {
-    backgroundColor: '#007AFF',
-    borderColor: '#007AFF',
-  },
-  optionText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-  },
-  optionTextSelected: {
-    color: '#fff',
-  },
-  optionDesc: {
-    fontSize: 12,
-    color: '#666',
-    marginTop: 3,
-  },
-  optionDescSelected: {
-    color: '#fff',
-  },
-  startButton: {
-    backgroundColor: '#34C759',
-    paddingVertical: 20,
-    borderRadius: 15,
+  header: {
     alignItems: 'center',
     marginTop: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    marginBottom: 40,
   },
-  startButtonText: {
+  title: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 18,
+    color: '#93C5FD',
+    textAlign: 'center',
+  },
+  topicGrid: {
+    flex: 1,
+    gap: 15,
+  },
+  topicCard: {
+    backgroundColor: '#2563EB',
+    borderRadius: 20,
+    padding: 25,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  topicIcon: {
+    fontSize: 48,
+    marginBottom: 10,
+  },
+  topicLabel: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#fff',
+    marginBottom: 5,
+  },
+  topicDesc: {
+    fontSize: 14,
+    color: '#BFDBFE',
   },
 });
