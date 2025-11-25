@@ -6,6 +6,7 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
+  Linking,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts, Poppins_800ExtraBold } from '@expo-google-fonts/poppins';
@@ -34,12 +35,24 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate('Difficulty', { topic });
   };
 
+  const handleWatermarkPress = () => {
+    Linking.openURL('https://www.linkedin.com/in/kiruthick-r-%E2%9A%A1-803291293/');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
       <View style={styles.header}>
-        <Text style={styles.title}>Speed Math Trainer</Text>
-        <Text style={styles.subtitle}>Choose Your Topic</Text>
+        <TouchableOpacity 
+          onPress={() => navigation.navigate('Welcome')} 
+          style={styles.backButton}
+        >
+          <Text style={styles.backIcon}>←</Text>
+        </TouchableOpacity>
+        <View style={styles.headerTextContainer}>
+          <Text style={styles.title}>Speed Math Trainer</Text>
+          <Text style={styles.subtitle}>Choose Your Topic</Text>
+        </View>
       </View>
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
@@ -65,9 +78,9 @@ export default function HomeScreen({ navigation }) {
           ))}
         </View>
       </ScrollView>
-      <View style={styles.watermark}>
+      <TouchableOpacity style={styles.watermark} onPress={handleWatermarkPress} activeOpacity={0.7}>
         <Text style={styles.watermarkText}>Developed by Kiruthick R</Text>
-      </View>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -75,7 +88,7 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EEF2F6',
+    backgroundColor: '#F0F7FF',
   },
   header: {
     backgroundColor: '#FFFFFF',
@@ -84,12 +97,28 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E7EF',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  backIcon: {
+    fontSize: 32,
+    color: '#3A7AFE',
+  },
+  headerTextContainer: {
+    flex: 1,
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontFamily: 'Poppins_800ExtraBold',
     color: '#2C3E50',
-    marginBottom: 6,
+    marginBottom: 0,
   },
   subtitle: {
     fontSize: 15,

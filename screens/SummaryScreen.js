@@ -217,7 +217,7 @@ export default function SummaryScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EEF2F6',
+    backgroundColor: '#F0F7FF',
     justifyContent: 'center',
   },
   scrollContent: {

@@ -261,7 +261,7 @@ export default function PracticeScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EEF2F6',
+    backgroundColor: '#F0F7FF',
     padding: 20,
   },
   header: {
