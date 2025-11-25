@@ -4,29 +4,23 @@
     "slug": "speed-math-trainer",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#007AFF"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.speedmath.trainer"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#007AFF"
       },
       "package": "com.speedmath.trainer"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "plugins": [
+      "expo-asset"
+    ]
   }
 }
