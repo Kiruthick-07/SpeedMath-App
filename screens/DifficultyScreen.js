@@ -5,18 +5,28 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useFonts, Poppins_800ExtraBold } from '@expo-google-fonts/poppins';
 
 export default function DifficultyScreen({ route, navigation }) {
   const { topic } = route.params;
 
+  let [fontsLoaded] = useFonts({
+    Poppins_800ExtraBold,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   const difficulties = [
-    { value: 1, label: 'Level 1', icon: '⭐', desc: 'Numbers 1-9', color: '#10B981' },
-    { value: 2, label: 'Level 2', icon: '⭐⭐', desc: 'Numbers 2-99', color: '#3B82F6' },
-    { value: 3, label: 'Level 3', icon: '⭐⭐⭐', desc: 'Numbers 10-999', color: '#8B5CF6' },
-    { value: 4, label: 'Level 4', icon: '⭐⭐⭐⭐', desc: 'Numbers 50-9999', color: '#F59E0B' },
-    { value: 5, label: 'Level 5', icon: '⭐⭐⭐⭐⭐', desc: 'Numbers 100-99999', color: '#EF4444' },
+    { value: 1, label: 'Level 1', icon: '⭐', desc: 'Numbers 1-9', color: '#43A047' },
+    { value: 2, label: 'Level 2', icon: '⭐⭐', desc: 'Numbers 2-99', color: '#1E88E5' },
+    { value: 3, label: 'Level 3', icon: '⭐⭐⭐', desc: 'Numbers 10-999', color: '#FB8C00' },
+    { value: 4, label: 'Level 4', icon: '⭐⭐⭐⭐', desc: 'Numbers 50-9999', color: '#8E24AA' },
+    { value: 5, label: 'Level 5', icon: '⭐⭐⭐⭐⭐', desc: 'Numbers 100-99999', color: '#EF5350' },
   ];
 
   const handleDifficultySelect = (difficulty) => {
@@ -25,22 +35,28 @@ export default function DifficultyScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-      <View style={styles.content}>
-        <View style={styles.header}>
+      <StatusBar style="dark" />
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Text style={styles.backIcon}>←</Text>
+        </TouchableOpacity>
+        <View style={styles.headerText}>
           <Text style={styles.title}>Choose Difficulty</Text>
           <Text style={styles.subtitle}>Select your skill level</Text>
         </View>
-
+      </View>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.difficultyList}>
           {difficulties.map((d) => (
             <TouchableOpacity
               key={d.value}
               style={[styles.difficultyCard, { borderLeftColor: d.color }]}
               onPress={() => handleDifficultySelect(d.value)}
-              activeOpacity={0.8}
+              activeOpacity={0.7}
             >
-              <Text style={styles.difficultyIcon}>{d.icon}</Text>
+              <View style={styles.iconContainer}>
+                <Text style={styles.difficultyIcon}>{d.icon}</Text>
+              </View>
               <View style={styles.difficultyInfo}>
                 <Text style={styles.difficultyLabel}>{d.label}</Text>
                 <Text style={styles.difficultyDesc}>{d.desc}</Text>
@@ -48,14 +64,7 @@ export default function DifficultyScreen({ route, navigation }) {
             </TouchableOpacity>
           ))}
         </View>
-
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backButtonText}>← Back</Text>
-        </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -63,73 +72,85 @@ export default function DifficultyScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E3A8A',
-  },
-  content: {
-    flex: 1,
-    padding: 20,
+    backgroundColor: '#F7F9FC',
   },
   header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 30,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  backIcon: {
+    fontSize: 32,
+    color: '#3A7AFE',
+  },
+  headerText: {
+    flex: 1,
   },
   title: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-    marginBottom: 10,
+    fontSize: 28,
+    fontFamily: 'Poppins_800ExtraBold',
+    color: '#1A1C1E',
+    marginBottom: 4,
   },
   subtitle: {
-    fontSize: 18,
-    color: '#93C5FD',
-    textAlign: 'center',
+    fontSize: 14,
+    color: '#636A74',
+  },
+  content: {
+    padding: 20,
+    paddingBottom: 40,
   },
   difficultyList: {
-    flex: 1,
-    gap: 15,
+    gap: 16,
   },
   difficultyCard: {
-    backgroundColor: '#2563EB',
-    borderRadius: 15,
-    padding: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 18,
     flexDirection: 'row',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 3,
     borderLeftWidth: 6,
   },
+  iconContainer: {
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    backgroundColor: '#EFF4FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
   difficultyIcon: {
-    fontSize: 32,
-    marginRight: 15,
+    fontSize: 20,
   },
   difficultyInfo: {
     flex: 1,
   },
   difficultyLabel: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 5,
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1A1C1E',
+    marginBottom: 4,
   },
   difficultyDesc: {
     fontSize: 14,
-    color: '#BFDBFE',
-  },
-  backButton: {
-    backgroundColor: '#1E40AF',
-    paddingVertical: 15,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  backButtonText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#fff',
+    color: '#636A74',
   },
 });

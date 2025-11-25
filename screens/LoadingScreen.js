@@ -7,12 +7,21 @@ import {
   Animated,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useFonts, Poppins_800ExtraBold } from '@expo-google-fonts/poppins';
 
 export default function LoadingScreen({ route, navigation }) {
   const { topic, difficulty, sessionLength } = route.params;
   const [fadeAnim] = useState(new Animated.Value(0));
   const [scaleAnim] = useState(new Animated.Value(0.5));
   const [spinAnim] = useState(new Animated.Value(0));
+
+  let [fontsLoaded] = useFonts({
+    Poppins_800ExtraBold,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   useEffect(() => {
     // Start animations
@@ -66,7 +75,7 @@ export default function LoadingScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <View style={styles.content}>
         <Animated.View
           style={[
@@ -80,7 +89,7 @@ export default function LoadingScreen({ route, navigation }) {
           <Text style={styles.loadingIcon}>🧮</Text>
         </Animated.View>
 
-        <Animated.View style={{ opacity: fadeAnim }}>
+        <Animated.View style={[styles.textContainer, { opacity: fadeAnim }]}>
           <Text style={styles.loadingText}>Preparing Questions...</Text>
           
           <View style={styles.infoCard}>
@@ -106,7 +115,7 @@ export default function LoadingScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E3A8A',
+    backgroundColor: '#F7F9FC',
   },
   content: {
     flex: 1,
@@ -115,52 +124,57 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   loadingCircle: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    backgroundColor: '#2563EB',
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#EFF4FF',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 40,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
     shadowRadius: 12,
-    elevation: 8,
+    elevation: 4,
   },
   loadingIcon: {
-    fontSize: 64,
+    fontSize: 56,
+  },
+  textContainer: {
+    alignItems: 'center',
+    width: '100%',
   },
   loadingText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: 26,
+    fontFamily: 'Poppins_800ExtraBold',
+    color: '#1A1C1E',
     marginBottom: 30,
     textAlign: 'center',
   },
   infoCard: {
-    backgroundColor: '#2563EB',
-    borderRadius: 15,
-    padding: 20,
-    width: 280,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 24,
+    width: '100%',
+    maxWidth: 320,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 3,
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: 16,
   },
   infoLabel: {
     fontSize: 16,
-    color: '#93C5FD',
+    color: '#636A74',
   },
   infoValue: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: '600',
+    color: '#1A1C1E',
   },
 });

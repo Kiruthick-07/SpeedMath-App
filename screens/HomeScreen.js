@@ -8,16 +8,25 @@ import {
   ScrollView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useFonts, Poppins_800ExtraBold } from '@expo-google-fonts/poppins';
 
 export default function HomeScreen({ navigation }) {
   const [selectedTopic, setSelectedTopic] = useState(null);
+  
+  let [fontsLoaded] = useFonts({
+    Poppins_800ExtraBold,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   const topics = [
-    { value: 'mixed', label: 'Mixed', icon: '🔀', desc: 'All Operations' },
-    { value: 'addition', label: 'Addition', icon: '➕', desc: 'Add Numbers' },
-    { value: 'subtraction', label: 'Subtraction', icon: '➖', desc: 'Subtract Numbers' },
-    { value: 'multiplication', label: 'Multiplication', icon: '✖️', desc: 'Multiply Numbers' },
-    { value: 'division', label: 'Division', icon: '➗', desc: 'Divide Numbers' },
+    { value: 'mixed', label: 'Mixed', icon: '🔀', desc: 'All Operations', accent: '#3A7AFE' },
+    { value: 'addition', label: 'Addition', icon: '➕', desc: 'Add Numbers', accent: '#43A047' },
+    { value: 'subtraction', label: 'Subtraction', icon: '➖', desc: 'Subtract Numbers', accent: '#FB8C00' },
+    { value: 'multiplication', label: 'Multiplication', icon: '✖️', desc: 'Multiply Numbers', accent: '#8E24AA' },
+    { value: 'division', label: 'Division', icon: '➗', desc: 'Divide Numbers', accent: '#EF5350' },
   ];
 
   const handleTopicSelect = (topic) => {
@@ -27,27 +36,31 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
+      <View style={styles.header}>
+        <Text style={styles.title}>Speed Math Trainer</Text>
+        <Text style={styles.subtitle}>Choose Your Topic</Text>
+      </View>
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header}>
-          <Text style={styles.title}>Speed Math Trainer</Text>
-          <Text style={styles.subtitle}>Choose Your Topic</Text>
-        </View>
-
         <View style={styles.topicGrid}>
           {topics.map((t) => (
             <TouchableOpacity
               key={t.value}
               style={styles.topicCard}
               onPress={() => handleTopicSelect(t.value)}
-              activeOpacity={0.8}
+              activeOpacity={0.7}
             >
-              <Text style={styles.topicIcon}>{t.icon}</Text>
-              <Text style={styles.topicLabel}>{t.label}</Text>
-              <Text style={styles.topicDesc}>{t.desc}</Text>
+              <View style={[styles.accentBar, { backgroundColor: t.accent }]} />
+              <View style={styles.iconContainer}>
+                <Text style={styles.topicIcon}>{t.icon}</Text>
+              </View>
+              <View style={styles.topicContent}>
+                <Text style={styles.topicLabel}>{t.label}</Text>
+                <Text style={styles.topicDesc}>{t.desc}</Text>
+              </View>
             </TouchableOpacity>
           ))}
         </View>
@@ -59,55 +72,77 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E3A8A',
+    backgroundColor: '#F7F9FC',
+  },
+  header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  title: {
+    fontSize: 32,
+    fontFamily: 'Poppins_800ExtraBold',
+    color: '#1A1C1E',
+    marginBottom: 6,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: '#636A74',
   },
   scrollContent: {
     padding: 20,
     paddingBottom: 40,
   },
-  header: {
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 40,
-  },
-  title: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#93C5FD',
-    textAlign: 'center',
-  },
   topicGrid: {
-    gap: 15,
+    gap: 16,
   },
   topicCard: {
-    backgroundColor: '#2563EB',
-    borderRadius: 20,
-    padding: 25,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
+    padding: 20,
+    flexDirection: 'row',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 3,
+    overflow: 'hidden',
+  },
+  accentBar: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 6,
+  },
+  iconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: '#EFF4FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginRight: 16,
   },
   topicIcon: {
-    fontSize: 48,
-    marginBottom: 10,
+    fontSize: 28,
+  },
+  topicContent: {
+    flex: 1,
   },
   topicLabel: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 5,
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1A1C1E',
+    marginBottom: 4,
   },
   topicDesc: {
     fontSize: 14,
-    color: '#BFDBFE',
+    color: '#636A74',
   },
 });

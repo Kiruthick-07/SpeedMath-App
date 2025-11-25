@@ -20,7 +20,8 @@
       "package": "com.speedmath.trainer"
     },
     "plugins": [
-      "expo-asset"
+      "expo-asset",
+      "expo-font"
     ]
   }
 }

@@ -10,12 +10,21 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFonts, Poppins_800ExtraBold } from '@expo-google-fonts/poppins';
 
 const STORAGE_KEY = '@mm_sessions';
 
 export default function SummaryScreen({ route, navigation }) {
   const { sessionData } = route.params;
   const [sessions, setSessions] = useState([]);
+
+  let [fontsLoaded] = useFonts({
+    Poppins_800ExtraBold,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   useEffect(() => {
     loadSessions();
@@ -206,7 +215,8 @@ export default function SummaryScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F7F9FC',
+    justifyContent: 'center',
   },
   scrollContent: {
     padding: 20,
@@ -214,78 +224,78 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333',
+    fontFamily: 'Poppins_800ExtraBold',
+    color: '#1A1C1E',
     textAlign: 'center',
     marginTop: 10,
     marginBottom: 25,
   },
   resultCard: {
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    padding: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
+    padding: 24,
     marginBottom: 30,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
     elevation: 3,
   },
   resultRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 14,
   },
   resultLabel: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: 15,
+    color: '#636A74',
   },
   resultValue: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: '#1A1C1E',
   },
   correctText: {
-    color: '#34C759',
-    fontSize: 20,
-    fontWeight: 'bold',
+    color: '#43A047',
+    fontSize: 18,
+    fontWeight: '700',
   },
   accuracyText: {
-    color: '#007AFF',
-    fontSize: 20,
-    fontWeight: 'bold',
+    color: '#3A7AFE',
+    fontSize: 18,
+    fontWeight: '700',
   },
   divider: {
     height: 1,
-    backgroundColor: '#eee',
-    marginVertical: 15,
+    backgroundColor: '#F0F0F0',
+    marginVertical: 16,
   },
   historyTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
+    fontSize: 26,
+    fontFamily: 'Poppins_800ExtraBold',
+    color: '#1A1C1E',
+    marginBottom: 16,
   },
   historyContainer: {
     marginBottom: 20,
   },
   historyCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 15,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 18,
     marginBottom: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
     elevation: 2,
   },
   historyHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 10,
+    marginBottom: 12,
   },
   historyHeaderLeft: {
     flex: 1,
@@ -293,15 +303,15 @@ const styles = StyleSheet.create({
   historyTopic: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: '#1A1C1E',
     marginBottom: 4,
   },
   historyDate: {
     fontSize: 12,
-    color: '#999',
+    color: '#9AA3B1',
   },
   deleteButton: {
-    padding: 5,
+    padding: 4,
     marginLeft: 10,
   },
   deleteIcon: {
@@ -310,46 +320,54 @@ const styles = StyleSheet.create({
   historyStats: {
     flexDirection: 'row',
     justifyContent: 'space-around',
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
   },
   historyStat: {
     alignItems: 'center',
   },
   historyStatValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#007AFF',
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#3A7AFE',
   },
   historyStatLabel: {
     fontSize: 12,
-    color: '#666',
-    marginTop: 2,
+    color: '#636A74',
+    marginTop: 4,
   },
   emptyState: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 30,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 40,
     alignItems: 'center',
     marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
   },
   emptyText: {
-    fontSize: 16,
-    color: '#999',
+    fontSize: 15,
+    color: '#9AA3B1',
   },
   backButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 18,
-    borderRadius: 12,
+    backgroundColor: '#3A7AFE',
+    paddingVertical: 16,
+    borderRadius: 16,
     alignItems: 'center',
     marginTop: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
   },
   backButtonText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
 });

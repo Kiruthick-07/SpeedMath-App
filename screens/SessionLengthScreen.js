@@ -5,11 +5,21 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useFonts, Poppins_800ExtraBold } from '@expo-google-fonts/poppins';
 
 export default function SessionLengthScreen({ route, navigation }) {
   const { topic, difficulty } = route.params;
+
+  let [fontsLoaded] = useFonts({
+    Poppins_800ExtraBold,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   const sessionLengths = [
     { value: 30, label: '30 Seconds', icon: '⚡', desc: 'Quick Practice' },
@@ -24,22 +34,28 @@ export default function SessionLengthScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-      <View style={styles.content}>
-        <View style={styles.header}>
+      <StatusBar style="dark" />
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Text style={styles.backIcon}>←</Text>
+        </TouchableOpacity>
+        <View style={styles.headerText}>
           <Text style={styles.title}>Session Length</Text>
           <Text style={styles.subtitle}>How long do you want to practice?</Text>
         </View>
-
+      </View>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.sessionList}>
           {sessionLengths.map((s) => (
             <TouchableOpacity
               key={s.value}
               style={styles.sessionCard}
               onPress={() => handleSessionSelect(s.value)}
-              activeOpacity={0.8}
+              activeOpacity={0.7}
             >
-              <Text style={styles.sessionIcon}>{s.icon}</Text>
+              <View style={styles.iconContainer}>
+                <Text style={styles.sessionIcon}>{s.icon}</Text>
+              </View>
               <View style={styles.sessionInfo}>
                 <Text style={styles.sessionLabel}>{s.label}</Text>
                 <Text style={styles.sessionDesc}>{s.desc}</Text>
@@ -47,14 +63,7 @@ export default function SessionLengthScreen({ route, navigation }) {
             </TouchableOpacity>
           ))}
         </View>
-
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backButtonText}>← Back</Text>
-        </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -62,72 +71,84 @@ export default function SessionLengthScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E3A8A',
-  },
-  content: {
-    flex: 1,
-    padding: 20,
+    backgroundColor: '#F7F9FC',
   },
   header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 30,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  backIcon: {
+    fontSize: 32,
+    color: '#3A7AFE',
+  },
+  headerText: {
+    flex: 1,
   },
   title: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-    marginBottom: 10,
+    fontSize: 28,
+    fontFamily: 'Poppins_800ExtraBold',
+    color: '#1A1C1E',
+    marginBottom: 4,
   },
   subtitle: {
-    fontSize: 18,
-    color: '#93C5FD',
-    textAlign: 'center',
+    fontSize: 14,
+    color: '#636A74',
+  },
+  content: {
+    padding: 20,
+    paddingBottom: 40,
   },
   sessionList: {
-    flex: 1,
-    gap: 15,
+    gap: 16,
   },
   sessionCard: {
-    backgroundColor: '#2563EB',
-    borderRadius: 15,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
     padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  iconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: '#EFF4FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
   },
   sessionIcon: {
-    fontSize: 40,
-    marginRight: 15,
+    fontSize: 28,
   },
   sessionInfo: {
     flex: 1,
   },
   sessionLabel: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 5,
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1A1C1E',
+    marginBottom: 4,
   },
   sessionDesc: {
     fontSize: 14,
-    color: '#BFDBFE',
-  },
-  backButton: {
-    backgroundColor: '#1E40AF',
-    paddingVertical: 15,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  backButtonText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#fff',
+    color: '#636A74',
   },
 });
