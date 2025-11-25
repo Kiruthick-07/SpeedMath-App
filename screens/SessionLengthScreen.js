@@ -71,7 +71,7 @@ export default function SessionLengthScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F9FC',
+    backgroundColor: '#EEF2F6',
   },
   header: {
     backgroundColor: '#FFFFFF',
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: '#E0E7EF',
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontFamily: 'Poppins_800ExtraBold',
-    color: '#1A1C1E',
+    color: '#2C3E50',
     marginBottom: 4,
   },
   subtitle: {
@@ -120,17 +120,19 @@ const styles = StyleSheet.create({
     padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: '#3A7AFE',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
     elevation: 3,
+    borderWidth: 1,
+    borderColor: '#F0F4F8',
   },
   iconContainer: {
     width: 56,
     height: 56,
     borderRadius: 16,
-    backgroundColor: '#EFF4FF',
+    backgroundColor: '#F0F7FF',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,

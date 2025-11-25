@@ -16,19 +16,21 @@ const STORAGE_KEY = '@mm_sessions';
 
 export default function SummaryScreen({ route, navigation }) {
   const { sessionData } = route.params;
-  const [sessions, setSessions] = useState([]);
-
+  
   let [fontsLoaded] = useFonts({
     Poppins_800ExtraBold,
   });
 
+  const [sessions, setSessions] = useState([]);
+
+  useEffect(() => {
+    if (!fontsLoaded) return;
+    loadSessions();
+  }, [fontsLoaded]);
+
   if (!fontsLoaded) {
     return null;
   }
-
-  useEffect(() => {
-    loadSessions();
-  }, []);
 
   const loadSessions = async () => {
     try {
@@ -215,7 +217,7 @@ export default function SummaryScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F9FC',
+    backgroundColor: '#EEF2F6',
     justifyContent: 'center',
   },
   scrollContent: {
@@ -225,7 +227,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontFamily: 'Poppins_800ExtraBold',
-    color: '#1A1C1E',
+    color: '#2C3E50',
     textAlign: 'center',
     marginTop: 10,
     marginBottom: 25,
@@ -235,11 +237,13 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     padding: 24,
     marginBottom: 30,
-    shadowColor: '#000',
+    shadowColor: '#3A7AFE',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
     elevation: 3,
+    borderWidth: 1,
+    borderColor: '#F0F4F8',
   },
   resultRow: {
     flexDirection: 'row',
@@ -274,7 +278,7 @@ const styles = StyleSheet.create({
   historyTitle: {
     fontSize: 26,
     fontFamily: 'Poppins_800ExtraBold',
-    color: '#1A1C1E',
+    color: '#2C3E50',
     marginBottom: 16,
   },
   historyContainer: {
@@ -285,11 +289,13 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 18,
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: '#3A7AFE',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#F0F4F8',
   },
   historyHeader: {
     flexDirection: 'row',

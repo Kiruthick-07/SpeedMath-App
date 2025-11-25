@@ -11,19 +11,17 @@ import { useFonts, Poppins_800ExtraBold } from '@expo-google-fonts/poppins';
 
 export default function LoadingScreen({ route, navigation }) {
   const { topic, difficulty, sessionLength } = route.params;
-  const [fadeAnim] = useState(new Animated.Value(0));
-  const [scaleAnim] = useState(new Animated.Value(0.5));
-  const [spinAnim] = useState(new Animated.Value(0));
-
+  
   let [fontsLoaded] = useFonts({
     Poppins_800ExtraBold,
   });
 
-  if (!fontsLoaded) {
-    return null;
-  }
+  const [fadeAnim] = useState(new Animated.Value(0));
+  const [scaleAnim] = useState(new Animated.Value(0.5));
+  const [spinAnim] = useState(new Animated.Value(0));
 
   useEffect(() => {
+    if (!fontsLoaded) return;
     // Start animations
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -55,7 +53,11 @@ export default function LoadingScreen({ route, navigation }) {
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   const spin = spinAnim.interpolate({
     inputRange: [0, 1],
@@ -115,7 +117,7 @@ export default function LoadingScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F9FC',
+    backgroundColor: '#EEF2F6',
   },
   content: {
     flex: 1,
@@ -127,14 +129,14 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#EFF4FF',
+    backgroundColor: '#F0F7FF',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 40,
-    shadowColor: '#000',
+    shadowColor: '#3A7AFE',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
+    shadowOpacity: 0.1,
+    shadowRadius: 15,
     elevation: 4,
   },
   loadingIcon: {
@@ -147,7 +149,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 26,
     fontFamily: 'Poppins_800ExtraBold',
-    color: '#1A1C1E',
+    color: '#2C3E50',
     marginBottom: 30,
     textAlign: 'center',
   },
@@ -157,11 +159,13 @@ const styles = StyleSheet.create({
     padding: 24,
     width: '100%',
     maxWidth: 320,
-    shadowColor: '#000',
+    shadowColor: '#3A7AFE',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
     elevation: 3,
+    borderWidth: 1,
+    borderColor: '#F0F4F8',
   },
   infoRow: {
     flexDirection: 'row',

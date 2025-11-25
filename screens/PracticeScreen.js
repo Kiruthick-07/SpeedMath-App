@@ -90,7 +90,6 @@ export default function PracticeScreen({ route, navigation }) {
     // Clear input and generate new question
     setUserAnswer('');
     generateNewQuestion();
-    Keyboard.dismiss();
   };
 
   // Handle skip
@@ -107,7 +106,6 @@ export default function PracticeScreen({ route, navigation }) {
 
     setUserAnswer('');
     generateNewQuestion();
-    Keyboard.dismiss();
   };
 
   // End session manually
@@ -181,30 +179,21 @@ export default function PracticeScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
-      >
-        <ScrollView 
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
+      
       {/* Header with timer and progress */}
       <View style={styles.header}>
         <View style={styles.timerContainer}>
-          <Text style={styles.timerLabel}>Time</Text>
+          <Text style={styles.timerLabel}>Time Left</Text>
           <Text style={styles.timerText}>{timeLeft}s</Text>
         </View>
         
-        <View style={styles.progressContainer}>
-          <Text style={styles.progressText}>
-            {correct} / {attempts}
-          </Text>
-          <Text style={styles.progressLabel}>
-            {accuracy}% accuracy
-          </Text>
-        </View>
+        <TouchableOpacity
+          style={styles.endButton}
+          onPress={handleEndSession}
+          disabled={!sessionActive}
+        >
+          <Text style={styles.endButtonText}>End</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Question Display */}
@@ -236,7 +225,7 @@ export default function PracticeScreen({ route, navigation }) {
           onPress={handleSubmit}
           disabled={!sessionActive}
         >
-          <Text style={styles.buttonText}>Submit</Text>
+          <Text style={styles.buttonText}>✓ Submit</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -244,20 +233,27 @@ export default function PracticeScreen({ route, navigation }) {
           onPress={handleSkip}
           disabled={!sessionActive}
         >
-          <Text style={styles.buttonText}>Skip</Text>
+          <Text style={[styles.buttonText, styles.skipButtonText]}>→ Skip</Text>
         </TouchableOpacity>
       </View>
 
-      {/* End Session Button */}
-      <TouchableOpacity
-        style={styles.endButton}
-        onPress={handleEndSession}
-        disabled={!sessionActive}
-      >
-        <Text style={styles.endButtonText}>End Session</Text>
-      </TouchableOpacity>
-        </ScrollView>
-      </KeyboardAvoidingView>
+      {/* Progress Display */}
+      <View style={styles.progressCard}>
+        <View style={styles.statItem}>
+          <Text style={styles.statLabel}>Attempts</Text>
+          <Text style={styles.statValue}>{attempts}</Text>
+        </View>
+        <View style={styles.statDivider} />
+        <View style={styles.statItem}>
+          <Text style={styles.statLabel}>Correct</Text>
+          <Text style={[styles.statValue, styles.correctValue]}>{correct}</Text>
+        </View>
+        <View style={styles.statDivider} />
+        <View style={styles.statItem}>
+          <Text style={styles.statLabel}>Accuracy</Text>
+          <Text style={[styles.statValue, styles.accuracyValue]}>{accuracy}%</Text>
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
@@ -265,74 +261,58 @@ export default function PracticeScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F9FC',
-    justifyContent: 'center',
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContent: {
+    backgroundColor: '#EEF2F6',
     padding: 20,
-    flexGrow: 1,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: 40,
     marginBottom: 30,
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 18,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
   },
   timerContainer: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   timerLabel: {
-    fontSize: 13,
+    fontSize: 14,
     color: '#636A74',
     marginBottom: 4,
   },
   timerText: {
-    fontSize: 28,
+    fontSize: 36,
     fontWeight: '700',
     color: '#EF5350',
   },
-  progressContainer: {
-    alignItems: 'center',
+  endButton: {
+    backgroundColor: '#EF5350',
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 20,
   },
-  progressText: {
-    fontSize: 26,
-    fontWeight: '700',
-    color: '#3A7AFE',
-  },
-  progressLabel: {
-    fontSize: 13,
-    color: '#636A74',
-    marginTop: 4,
+  endButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
   questionContainer: {
-    minHeight: 200,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 24,
     padding: 40,
     marginBottom: 30,
+    minHeight: 180,
+    justifyContent: 'center',
+    alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8,
   },
   questionText: {
-    fontSize: 44,
+    fontSize: 48,
     fontWeight: '700',
-    color: '#1A1C1E',
+    color: '#2C3E50',
     textAlign: 'center',
   },
   inputContainer: {
@@ -340,61 +320,84 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: '#FFFFFF',
-    fontSize: 30,
+    fontSize: 32,
     fontWeight: '600',
-    color: '#1A1C1E',
+    color: '#2C3E50',
     textAlign: 'center',
-    paddingVertical: 18,
+    paddingVertical: 20,
     borderRadius: 16,
-    borderWidth: 2,
-    borderColor: '#3A7AFE',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   buttonContainer: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 12,
+    marginBottom: 24,
   },
   button: {
     flex: 1,
-    paddingVertical: 16,
-    borderRadius: 14,
+    paddingVertical: 18,
+    borderRadius: 16,
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
   submitButton: {
     backgroundColor: '#43A047',
   },
   skipButton: {
-    backgroundColor: '#FB8C00',
+    backgroundColor: '#FFFFFF',
   },
   buttonText: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#FFFFFF',
   },
-  endButton: {
-    backgroundColor: '#EF5350',
-    paddingVertical: 14,
-    borderRadius: 14,
+  skipButtonText: {
+    color: '#FB8C00',
+  },
+  progressCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: '#3A7AFE',
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 2,
+    shadowRadius: 12,
+    elevation: 3,
   },
-  endButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
+  statItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statLabel: {
+    fontSize: 13,
+    color: '#636A74',
+    marginBottom: 6,
+  },
+  statValue: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#2C3E50',
+  },
+  correctValue: {
+    color: '#43A047',
+  },
+  accuracyValue: {
+    color: '#3A7AFE',
+  },
+  statDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: '#E0E7EF',
   },
 });
