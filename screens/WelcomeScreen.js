@@ -9,6 +9,7 @@ import {
   Linking,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import * as Haptics from 'expo-haptics';
 
 const { width } = Dimensions.get('window');
 
@@ -49,10 +50,12 @@ export default function WelcomeScreen({ navigation }) {
   }, []);
 
   const handleGetStarted = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     navigation.replace('Home');
   };
 
   const handleWatermarkPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     Linking.openURL('https://www.linkedin.com/in/kiruthick-r-%E2%9A%A1-803291293/');
   };
 

@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts, Poppins_800ExtraBold } from '@expo-google-fonts/poppins';
+import * as Haptics from 'expo-haptics';
 
 export default function DifficultyScreen({ route, navigation }) {
   const { topic } = route.params;
@@ -30,6 +31,7 @@ export default function DifficultyScreen({ route, navigation }) {
   ];
 
   const handleDifficultySelect = (difficulty) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     navigation.navigate('SessionLength', { topic, difficulty });
   };
 

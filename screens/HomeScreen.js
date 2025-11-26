@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts, Poppins_800ExtraBold } from '@expo-google-fonts/poppins';
+import * as Haptics from 'expo-haptics';
 
 export default function HomeScreen({ navigation }) {
   const [selectedTopic, setSelectedTopic] = useState(null);
@@ -31,6 +32,7 @@ export default function HomeScreen({ navigation }) {
   ];
 
   const handleTopicSelect = (topic) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setSelectedTopic(topic);
     navigation.navigate('Difficulty', { topic });
   };

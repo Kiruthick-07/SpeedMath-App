@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts, Poppins_800ExtraBold } from '@expo-google-fonts/poppins';
+import * as Haptics from 'expo-haptics';
 
 export default function SessionLengthScreen({ route, navigation }) {
   const { topic, difficulty } = route.params;
@@ -29,6 +30,7 @@ export default function SessionLengthScreen({ route, navigation }) {
   ];
 
   const handleSessionSelect = (sessionLength) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     navigation.navigate('Loading', { topic, difficulty, sessionLength });
   };
 

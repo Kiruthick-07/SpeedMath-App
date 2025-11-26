@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Haptics from 'expo-haptics';
 import { makeQuestion } from '../utils/questionGenerator';
 
 const STORAGE_KEY = '@mm_sessions';
@@ -69,7 +70,7 @@ export default function PracticeScreen({ route, navigation }) {
   };
 
   // Handle answer submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!sessionActive) return;
     if (userAnswer.trim() === '') return;
 
@@ -82,6 +83,9 @@ export default function PracticeScreen({ route, navigation }) {
     if (isCorrect) {
       correctRef.current += 1;
       setCorrect(correctRef.current);
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } else {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
     
     responseTimesRef.current.push(responseTime);
@@ -93,7 +97,7 @@ export default function PracticeScreen({ route, navigation }) {
   };
 
   // Handle skip
-  const handleSkip = () => {
+  const handleSkip = async () => {
     if (!sessionActive) return;
 
     const responseTime = Date.now() - questionStartTime;
@@ -103,6 +107,8 @@ export default function PracticeScreen({ route, navigation }) {
     
     responseTimesRef.current.push(responseTime);
     setResponseTimes(responseTimesRef.current);
+
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     setUserAnswer('');
     generateNewQuestion();
