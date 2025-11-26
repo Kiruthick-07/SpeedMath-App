@@ -38,7 +38,13 @@ export default function HomeScreen({ navigation }) {
   };
 
   const handleWatermarkPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     Linking.openURL('https://www.linkedin.com/in/kiruthick-r-%E2%9A%A1-803291293/');
+  };
+
+  const handleViewHistory = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    navigation.navigate('Summary', { sessionData: { topic: '', difficulty: 0, lengthSeconds: 0, attempts: 0, correct: 0, avgResponseMs: 0, timestamp: new Date().toISOString() } });
   };
 
   return (
@@ -79,6 +85,15 @@ export default function HomeScreen({ navigation }) {
             </TouchableOpacity>
           ))}
         </View>
+        
+        <TouchableOpacity
+          style={styles.historyButton}
+          onPress={handleViewHistory}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.historyButtonIcon}>📊</Text>
+          <Text style={styles.historyButtonText}>View Previous Results</Text>
+        </TouchableOpacity>
       </ScrollView>
       <TouchableOpacity style={styles.watermark} onPress={handleWatermarkPress} activeOpacity={0.7}>
         <Text style={styles.watermarkText}>Developed by Kiruthick R</Text>
@@ -180,6 +195,32 @@ const styles = StyleSheet.create({
   topicDesc: {
     fontSize: 14,
     color: '#636A74',
+  },
+  historyButton: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
+    padding: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 30,
+    marginBottom: 60,
+    shadowColor: '#3A7AFE',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 3,
+    borderWidth: 2,
+    borderColor: '#3A7AFE',
+  },
+  historyButtonIcon: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  historyButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#3A7AFE',
   },
   watermark: {
     position: 'absolute',

@@ -11,11 +11,13 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts, Poppins_800ExtraBold } from '@expo-google-fonts/poppins';
+import * as Haptics from 'expo-haptics';
 
 const STORAGE_KEY = '@mm_sessions';
 
 export default function SummaryScreen({ route, navigation }) {
   const { sessionData } = route.params;
+  const isFromSession = sessionData.attempts > 0; // Check if coming from actual session
   
   let [fontsLoaded] = useFonts({
     Poppins_800ExtraBold,
@@ -67,6 +69,7 @@ export default function SummaryScreen({ route, navigation }) {
   };
 
   const handleBackToHome = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     navigation.navigate('Home');
   };
 
@@ -91,11 +94,27 @@ export default function SummaryScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
+      {!isFromSession && (
+        <View style={styles.header}>
+          <TouchableOpacity 
+            onPress={handleBackToHome} 
+            style={styles.backButton}
+          >
+            <Text style={styles.backIcon}>←</Text>
+          </TouchableOpacity>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.headerTitle}>Speed Math Trainer</Text>
+            <Text style={styles.subtitle}>Your Training History</Text>
+          </View>
+        </View>
+      )}
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>Session Complete!</Text>
+        {isFromSession && (
+          <>
+            <Text style={styles.title}>Session Complete!</Text>
 
-        {/* Current Session Results */}
-        <View style={styles.resultCard}>
+            {/* Current Session Results */}
+            <View style={styles.resultCard}>
           <View style={styles.resultRow}>
             <Text style={styles.resultLabel}>Topic:</Text>
             <Text style={styles.resultValue}>
@@ -141,9 +160,13 @@ export default function SummaryScreen({ route, navigation }) {
             </Text>
           </View>
         </View>
+          </>
+        )}
 
         {/* Session History */}
-        <Text style={styles.historyTitle}>Recent Sessions</Text>
+        <Text style={styles.historyTitle}>
+          {isFromSession ? 'Recent Sessions' : 'Previous Results'}
+        </Text>
         
         {sessions.length === 0 ? (
           <View style={styles.emptyState}>
@@ -220,6 +243,40 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F7FF',
     justifyContent: 'center',
   },
+  header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E7EF',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  backIcon: {
+    fontSize: 32,
+    color: '#3A7AFE',
+  },
+  headerTextContainer: {
+    flex: 1,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontFamily: 'Poppins_800ExtraBold',
+    color: '#2C3E50',
+    marginBottom: 0,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: '#636A74',
+  },
   scrollContent: {
     padding: 20,
     paddingBottom: 40,
@@ -279,6 +336,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontFamily: 'Poppins_800ExtraBold',
     color: '#2C3E50',
+    marginTop: 30,
     marginBottom: 16,
   },
   historyContainer: {
