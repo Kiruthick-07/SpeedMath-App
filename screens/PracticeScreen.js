@@ -18,6 +18,7 @@ import * as Haptics from 'expo-haptics';
 import { makeQuestion } from '../utils/questionGenerator';
 
 const STORAGE_KEY = '@mm_sessions';
+const HIGH_SCORES_KEY = '@mm_high_scores';
 const MAX_SESSIONS = 30;
 
 export default function PracticeScreen({ route, navigation }) {
@@ -126,6 +127,34 @@ export default function PracticeScreen({ route, navigation }) {
     );
   };
 
+  // Check and update high score
+  const checkAndUpdateHighScore = async (sessionData) => {
+    try {
+      const key = `${sessionData.topic}_${sessionData.difficulty}`;
+      const highScoresData = await AsyncStorage.getItem(HIGH_SCORES_KEY);
+      const highScores = highScoresData ? JSON.parse(highScoresData) : {};
+      
+      const currentHighScore = highScores[key];
+      const newScore = sessionData.correct;
+      
+      // Update if no high score exists or new score is better
+      if (!currentHighScore || newScore > currentHighScore.correct) {
+        highScores[key] = {
+          correct: newScore,
+          attempts: sessionData.attempts,
+          avgResponseMs: sessionData.avgResponseMs,
+          timestamp: sessionData.timestamp,
+        };
+        await AsyncStorage.setItem(HIGH_SCORES_KEY, JSON.stringify(highScores));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error updating high score:', error);
+      return false;
+    }
+  };
+
   // End session and save results
   const endSession = async () => {
     setSessionActive(false);
@@ -156,6 +185,10 @@ export default function PracticeScreen({ route, navigation }) {
       avgResponseMs,
       timestamp: new Date().toISOString(),
     };
+
+    // Check and update high score
+    const isNewHighScore = await checkAndUpdateHighScore(sessionData);
+    sessionData.isNewHighScore = isNewHighScore;
 
     // Save to AsyncStorage
     try {

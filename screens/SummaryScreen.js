@@ -14,6 +14,7 @@ import { useFonts, Poppins_800ExtraBold } from '@expo-google-fonts/poppins';
 import * as Haptics from 'expo-haptics';
 
 const STORAGE_KEY = '@mm_sessions';
+const HIGH_SCORES_KEY = '@mm_high_scores';
 
 export default function SummaryScreen({ route, navigation }) {
   const { sessionData } = route.params;
@@ -24,10 +25,12 @@ export default function SummaryScreen({ route, navigation }) {
   });
 
   const [sessions, setSessions] = useState([]);
+  const [highScores, setHighScores] = useState({});
 
   useEffect(() => {
     if (!fontsLoaded) return;
     loadSessions();
+    loadHighScores();
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
@@ -42,6 +45,17 @@ export default function SummaryScreen({ route, navigation }) {
       }
     } catch (error) {
       console.error('Error loading sessions:', error);
+    }
+  };
+
+  const loadHighScores = async () => {
+    try {
+      const highScoresData = await AsyncStorage.getItem(HIGH_SCORES_KEY);
+      if (highScoresData) {
+        setHighScores(JSON.parse(highScoresData));
+      }
+    } catch (error) {
+      console.error('Error loading high scores:', error);
     }
   };
 
@@ -111,7 +125,14 @@ export default function SummaryScreen({ route, navigation }) {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {isFromSession && (
           <>
-            <Text style={styles.title}>Session Complete!</Text>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>Session Complete!</Text>
+              {sessionData.isNewHighScore && (
+                <View style={styles.highScoreBadge}>
+                  <Text style={styles.highScoreBadgeText}>🏆 NEW HIGH SCORE!</Text>
+                </View>
+              )}
+            </View>
 
             {/* Current Session Results */}
             <View style={styles.resultCard}>
@@ -159,6 +180,22 @@ export default function SummaryScreen({ route, navigation }) {
               {(sessionData.avgResponseMs / 1000).toFixed(2)}s
             </Text>
           </View>
+
+          {(() => {
+            const key = `${sessionData.topic}_${sessionData.difficulty}`;
+            const highScore = highScores[key];
+            if (highScore && !sessionData.isNewHighScore) {
+              return (
+                <>
+                  <View style={styles.divider} />
+                  <View style={styles.highScoreInfo}>
+                    <Text style={styles.highScoreLabel}>🏆 High Score: {highScore.correct} correct</Text>
+                  </View>
+                </>
+              );
+            }
+            return null;
+          })()}
         </View>
           </>
         )}
@@ -167,6 +204,24 @@ export default function SummaryScreen({ route, navigation }) {
         <Text style={styles.historyTitle}>
           {isFromSession ? 'Recent Sessions' : 'Previous Results'}
         </Text>
+        
+        {/* High Scores Summary */}
+        {Object.keys(highScores).length > 0 && (
+          <View style={styles.highScoresCard}>
+            <Text style={styles.highScoresCardTitle}>🏆 High Scores</Text>
+            {Object.entries(highScores).map(([key, score]) => {
+              const [topic, difficulty] = key.split('_');
+              return (
+                <View key={key} style={styles.highScoreRow}>
+                  <Text style={styles.highScoreText}>
+                    {getTopicLabel(topic)} - Level {difficulty}
+                  </Text>
+                  <Text style={styles.highScoreValue}>{score.correct} correct</Text>
+                </View>
+              );
+            })}
+          </View>
+        )}
         
         {sessions.length === 0 ? (
           <View style={styles.emptyState}>
@@ -281,13 +336,33 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 40,
   },
+  titleContainer: {
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 25,
+  },
   title: {
     fontSize: 32,
     fontFamily: 'Poppins_800ExtraBold',
     color: '#2C3E50',
     textAlign: 'center',
-    marginTop: 10,
-    marginBottom: 25,
+  },
+  highScoreBadge: {
+    backgroundColor: '#FFD700',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginTop: 12,
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  highScoreBadgeText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1A1C1E',
   },
   resultCard: {
     backgroundColor: '#FFFFFF',
@@ -332,12 +407,61 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F0F0',
     marginVertical: 16,
   },
+  highScoreInfo: {
+    backgroundColor: '#FFF8DC',
+    padding: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  highScoreLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#D4A000',
+  },
   historyTitle: {
     fontSize: 26,
     fontFamily: 'Poppins_800ExtraBold',
     color: '#2C3E50',
     marginTop: 30,
     marginBottom: 16,
+  },
+  highScoresCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 20,
+    marginBottom: 16,
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 3,
+    borderWidth: 2,
+    borderColor: '#FFD700',
+  },
+  highScoresCardTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#D4A000',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  highScoreRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  highScoreText: {
+    fontSize: 14,
+    color: '#636A74',
+    fontWeight: '500',
+  },
+  highScoreValue: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#D4A000',
   },
   historyContainer: {
     marginBottom: 20,
